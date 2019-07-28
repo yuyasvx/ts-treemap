@@ -8,6 +8,9 @@ const decideComparators = (value: unknown): ((a: any, b: any) => number) => {
   if (typeof value === 'string') {
     return comparators.string
   }
+  if (typeof value === 'bigint') {
+    return comparators.bigInt
+  }
   const toString = Object.prototype.toString
   if (toString.call(value).endsWith('Date]')) {
     return comparators.Date
