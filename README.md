@@ -2,6 +2,9 @@
 
 a TypeScript implementation of TreeMap
 
+[![CI](https://circleci.com/gh/yuyasvx/ts-treemap/tree/master.svg?style=shield&circle-token=f7dfd3305577f40429c6b2046bc658cbc3614997)](https://circleci.com/gh/yuyasvx/ts-treemap)
+[![codecov](https://codecov.io/gh/yuyasvx/ts-treemap/branch/master/graph/badge.svg)](https://codecov.io/gh/yuyasvx/ts-treemap)
+
 - Java でお馴染みの TreeMap の一部機能を TypeScript で使うことが出来ます。
 - ES2015 から追加された“Map”オブジェクトがベースになっていますが、以下の点で違いがあります。
   - キーの順序が保証されています。並び順は定義することができます。

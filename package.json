@@ -11,7 +11,12 @@
     "build": "npm run clear && tsc -p ./tsconfig.build.json",
     "prepublishOnly": "npm run build"
   },
-  "keywords": [],
+  "keywords": [
+    "treemap",
+    "navigablemap",
+    "map",
+    "typescript"
+  ],
   "author": "yuyasvx",
   "license": "MIT",
   "devDependencies": {

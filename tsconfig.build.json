@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "module": "umd",
+    "module": "commonjs",
     "declaration": true,
     "inlineSources": false,
     "sourceMap": false
