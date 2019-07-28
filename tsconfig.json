@@ -1,8 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
     "target": "esnext",
-    "module": "commonjs",
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
@@ -17,7 +15,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "lib": ["esnext", "scripthost"]
+    "lib": ["esnext", "scripthost", "dom"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

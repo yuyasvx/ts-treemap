@@ -3,11 +3,13 @@
   "version": "0.0.1",
   "description": "a TypeScript implementation of TreeMap",
   "main": "dist/TreeMap.js",
+  "types": "dist/TreeMap.d.ts",
   "scripts": {
     "clear": "rm -rf ./dist/**/* ./dist/*",
     "test": "jest",
     "test:unit:ci": "jest && codecov",
-    "build": "npm run clear && tsc -p ./tsconfig.build.json"
+    "build": "npm run clear && tsc -p ./tsconfig.build.json",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [],
   "author": "yuyasvx",
