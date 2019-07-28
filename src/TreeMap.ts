@@ -1,18 +1,44 @@
+import comparators from './Comparators'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const decideComparators = (value: unknown): ((a: any, b: any) => number) => {
+  if (typeof value === 'number') {
+    return comparators.number
+  }
+  if (typeof value === 'string') {
+    return comparators.string
+  }
+  const toString = Object.prototype.toString
+  if (toString.call(value).endsWith('Date]')) {
+    return comparators.Date
+  }
+  throw new Error(
+    'Cannot sort keys in this map. You have to specify compareFn if the type of key in this map is not number, string, or Date.'
+  )
+}
+
 export default class TreeMap<K, V> extends Map {
   /**
    * A function that defines the sort order of the keys.
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Description
    */
-  public readonly compareFn: (a: K, b: K) => number
+  private compareFn: (a: K, b: K) => number
 
   private sortedKeys: K[]
 
+  private specifiedCompareFn: boolean = false
+
+  get comparator(): (a: K, b: K) => number {
+    return this.compareFn
+  }
+
   /**
-   * @param compareFn Specifies a function that defines the sort order of the keys
+   * @param compareFn A function that defines the sort order of the keys.
    */
-  constructor(compareFn: (a: K, b: K) => number) {
+  constructor(compareFn?: (a: K, b: K) => number) {
     super()
-    this.compareFn = compareFn
+    this.compareFn = compareFn == null ? comparators.none : compareFn
+    this.specifiedCompareFn = compareFn != null
     this.sortedKeys = []
   }
 
@@ -21,7 +47,7 @@ export default class TreeMap<K, V> extends Map {
    * @param map Map object
    * @param compareFn Specifies a function that defines the sort order of the keys
    */
-  public static fromMap<K, V>(map: Map<K, V>, compareFn: (a: K, b: K) => number): TreeMap<K, V> {
+  public static fromMap<K, V>(map: Map<K, V>, compareFn?: (a: K, b: K) => number): TreeMap<K, V> {
     const treeMap = new TreeMap<K, V>(compareFn)
     treeMap.setAll(map)
     return treeMap
@@ -55,6 +81,10 @@ export default class TreeMap<K, V> extends Map {
 
     const sortedKeys = [...this.sortedKeys]
     sortedKeys.push(key)
+    if (sortedKeys.length === 1 && !this.specifiedCompareFn) {
+      this.compareFn = decideComparators(sortedKeys[0])
+      this.specifiedCompareFn = true
+    }
     this.sortedKeys = sortedKeys.sort(this.compareFn)
 
     return this

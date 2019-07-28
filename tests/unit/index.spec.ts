@@ -1,7 +1,7 @@
 import TreeMap from '../../src/TreeMap'
 
 const getTreeMap = (): TreeMap<number, string> => {
-  const treeMap = new TreeMap<number, string>((a, b) => a - b)
+  const treeMap = new TreeMap<number, string>()
   treeMap.set(0, 'a')
   treeMap.set(20, 'e')
   treeMap.set(15, 'd')
@@ -9,6 +9,11 @@ const getTreeMap = (): TreeMap<number, string> => {
   treeMap.set(10, 'c')
 
   return treeMap
+}
+
+interface TestInterface {
+  id: number
+  content: string
 }
 
 describe('TreeMap test', () => {
@@ -136,5 +141,55 @@ describe('TreeMap test', () => {
     expect(treeMap.lowerEntry(2)).toStrictEqual([0, 'a'])
     expect(treeMap.lowerEntry(5)).toStrictEqual([0, 'a'])
     expect(treeMap.lowerEntry(21)).toStrictEqual([20, 'e'])
+  })
+
+  it('lower', () => {
+    const treeMap = getTreeMap()
+
+    expect(treeMap.lowerKey(-1)).toBeUndefined()
+    expect(treeMap.lowerKey(2)).toBe(0)
+    expect(treeMap.lowerKey(5)).toBe(0)
+    expect(treeMap.lowerKey(21)).toBe(20)
+    expect(treeMap.lowerEntry(-1)).toBeUndefined()
+    expect(treeMap.lowerEntry(2)).toStrictEqual([0, 'a'])
+    expect(treeMap.lowerEntry(5)).toStrictEqual([0, 'a'])
+    expect(treeMap.lowerEntry(21)).toStrictEqual([20, 'e'])
+  })
+
+  it('compare string', () => {
+    const treeMap = new TreeMap<string, string>()
+    treeMap.set('a', 'test1')
+    treeMap.set('c', 'test3')
+    treeMap.set('b', 'test2')
+
+    expect(Array.from(treeMap.keys())).toStrictEqual(['a', 'b', 'c'])
+  })
+
+  it('compare date', () => {
+    const treeMap = new TreeMap<Date, string>()
+    treeMap.set(new Date('2019-02-11'), '建国記念の日')
+    treeMap.set(new Date('2019-01-01'), "new year's day")
+    treeMap.set(new Date('2019-01-14'), '成人の日')
+
+    expect(Array.from(treeMap.keys())).toStrictEqual([
+      new Date('2019-01-01'),
+      new Date('2019-01-14'),
+      new Date('2019-02-11')
+    ])
+    expect(treeMap.higherKey(new Date('2019-01-31'))).toStrictEqual(new Date('2019-02-11'))
+  })
+
+  it('compares error', () => {
+    let expetedError: Error | undefined
+    try {
+      const treeMap = new TreeMap<TestInterface, string>()
+      treeMap.set({ id: 1, content: 'a' }, 'a')
+      treeMap.set({ id: 2, content: 'b' }, 'b')
+      treeMap.set({ id: 3, content: 'c' }, 'c')
+    } catch (e) {
+      expetedError = e
+    }
+
+    expect(expetedError).toBeTruthy()
   })
 })
