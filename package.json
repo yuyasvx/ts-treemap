@@ -1,6 +1,6 @@
 {
   "name": "ts-treemap",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "a TypeScript implementation of TreeMap",
   "main": "dist/TreeMap.js",
   "types": "dist/TreeMap.d.ts",
@@ -11,7 +11,12 @@
     "build": "npm run clear && tsc -p ./tsconfig.build.json",
     "prepublishOnly": "npm run build"
   },
-  "keywords": [],
+  "keywords": [
+    "treemap",
+    "navigablemap",
+    "map",
+    "typescript"
+  ],
   "author": "yuyasvx",
   "license": "MIT",
   "devDependencies": {
