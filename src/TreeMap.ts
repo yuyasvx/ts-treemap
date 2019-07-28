@@ -1,24 +1,4 @@
-import comparators from './Comparators'
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const decideComparators = (value: unknown): ((a: any, b: any) => number) => {
-  if (typeof value === 'number') {
-    return comparators.number
-  }
-  if (typeof value === 'string') {
-    return comparators.string
-  }
-  if (typeof value === 'bigint') {
-    return comparators.bigInt
-  }
-  const toString = Object.prototype.toString
-  if (toString.call(value).endsWith('Date]')) {
-    return comparators.Date
-  }
-  throw new Error(
-    'Cannot sort keys in this map. You have to specify compareFn if the type of key in this map is not number, string, or Date.'
-  )
-}
+import { decideCompareFn, comparators } from './Comparators'
 
 export default class TreeMap<K, V> extends Map {
   /**
@@ -85,7 +65,7 @@ export default class TreeMap<K, V> extends Map {
     const sortedKeys = [...this.sortedKeys]
     sortedKeys.push(key)
     if (sortedKeys.length === 1 && !this.specifiedCompareFn) {
-      this.compareFn = decideComparators(sortedKeys[0])
+      this.compareFn = decideCompareFn(sortedKeys[0])
       this.specifiedCompareFn = true
     }
     this.sortedKeys = sortedKeys.sort(this.compareFn)
