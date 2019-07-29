@@ -5,16 +5,14 @@ a TypeScript implementation of TreeMap
 [![CI](https://circleci.com/gh/yuyasvx/ts-treemap/tree/master.svg?style=shield&circle-token=f7dfd3305577f40429c6b2046bc658cbc3614997)](https://circleci.com/gh/yuyasvx/ts-treemap)
 [![codecov](https://codecov.io/gh/yuyasvx/ts-treemap/branch/master/graph/badge.svg)](https://codecov.io/gh/yuyasvx/ts-treemap)
 
-- Java でお馴染みの TreeMap の一部機能を TypeScript で使うことが出来ます。
-- ES2015 から追加された“Map”オブジェクトがベースになっていますが、以下の点で違いがあります。
-  - キーの順序が保証されています。並び順は定義することができます。
-  - 指定したキーの付近にあるエントリや、最小/最大のキーを取得することが出来ます
-  - マップをコピーしたり、マップとマップを結合して 1 つに統合する便利機能もあります。
+ES2015 から追加された“Map”オブジェクトをベースに、Java でお馴染みの [TreeMap](https://docs.oracle.com/javase/jp/8/docs/api/java/util/TreeMap.html) の一部機能を TypeScript で使うことが出来ます。
 
-## 注意
+## ES2015 の Map との違い
 
-- このマップはイミュータブルになっていませんので、set()や delete()を行うと、対象のマップ自体に変更が行われます。
-- パフォーマンスに関する考慮や検証は一切行っていません。
+✅ キーがソートされている。  
+✅ 指定したキーの周辺のキーを取得できる。  
+✅ Map をコピーできる。  
+✅ 2 つの Map を 1 つにマージできる。
 
 # 使い方
 
@@ -28,6 +26,8 @@ npm i ts-treemap --save
 
 ES2015 の Map と同じ要領で使うことが出来ます。
 
+### Map の作成とエントリの追加
+
 ```typescript
 import TreeMap from 'ts-treemap'
 
@@ -37,19 +37,63 @@ const treeMap = new TreeMap<number, string>()
 treeMap.set(10, 'abc')
 treeMap.set(5, 'def')
 treeMap.set(0, 'ghi')
-
-// get entry
-treeMap.firstEntry() // [0, 'ghi']
-treeMap.higherEntry(0) // [5, 'def']
 ```
 
-## 注意
+### エントリの取得
 
-TreeMap は、キーの並び順を常にソートしています。その都合上、TreeMap には比較関数を与える必要があります。比較関数は、Array.prototype.sort()で用いられる[比較関数](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#説明)に準拠しています。
+```typescript
+const treeMap = new TreeMap<number, string>()
 
-ただし、キーの型が`number`, `string`, `Date`のどれかに該当する場合は、比較関数を与えなくても動作します。該当しない場合は、**1 つ目のエントリを追加した時にエラーが発生します。**
+// get first entry
+treeMap.firstEntry() // [0, 'ghi]
 
-**✅ 問題なく動作する例：**
+// get entry nearest to key '7'
+treeMap.floorEntry(7) // [5, 'def']
+```
+
+### Map のコピー
+
+```typescript
+// copy map
+const treeMap = new TreeMap<number, string>()
+const copiedMap = treeMap.duplicate()
+
+// copy as Map object
+const map: Map<number, string> = treeMap.toMap()
+
+// create TreeMap from Map
+const treeMap2 = TreeMap.from(map)
+```
+
+## 既知の問題
+
+以下のように`TreeMap.prototype.forEach()`した時の処理順序は**保証していません**。
+
+```typescript
+import TreeMap from 'ts-treemap'
+
+const treeMap = new TreeMap<number, string>()
+
+treeMap.set(10, 'abc')
+treeMap.set(5, 'def')
+treeMap.set(0, 'ghi')
+
+treeMap.forEach((key, value) => {
+  // ...
+})
+```
+
+## 注意!
+
+キーをソートするためには、比較を行うための関数を定義する必要があります。TreeMap は内部で比較関数を持っており、キーを追加するたびに、比較関数によって自動でキーをソートします。
+
+比較関数は、Array.prototype.sort()で用いられる[比較関数](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#説明)に準拠しています。
+
+キーの型が`number`, `string`, `Date`のどれかに該当する場合は、デフォルトで用意されている関数で比較を行うので、比較関数を定義する必要はありません。（ご自身で定義することも出来ます）
+
+キーの型が上記のいずれにも該当しない場合、比較関数を与えずに TreeMap を生成してから**1 つ目のエントリを追加した時にエラーが発生します。**
+
+**✅ Do:**
 
 ```typescript
 import TreeMap from 'ts-treemap'
@@ -59,17 +103,17 @@ const numberMap = new TreeMap<number, string>()
 numberMap.set(1, 'foo') // OK
 
 const stringMap = new TreeMap<string, string>()
-numberMap.set('1', 'foo') // OK
+stringMap.set('1', 'foo') // OK
 
 const dateMap = new TreeMap<Date, string>()
-numberMap.set(new Date('2019-01-01'), 'foo') // OK
+dateMap.set(new Date('2019-01-01'), 'foo') // OK
 
 // compareFn is defined
 const objectMap = new TreeMap<Day.Dayjs, string>((a, b) => a.unix() - b.unix())
 objectMap.set(Day('2019-01-01'), 'foo') // OK
 ```
 
-**🛑 エラーが発生する例：**
+**🛑 Don’t:**
 
 ```typescript
 import TreeMap from 'ts-treemap'
@@ -79,10 +123,3 @@ import Day from 'dayjs'
 const errMap = new TreeMap<Day.Dayjs, string>()
 errMap.set(Day('2019-01-01'), 'foo') // throws error
 ```
-
-### 比較関数について
-
-- 2 つの値を比較し、比較結果を number 型として返す関数です。
-  - `a`と`b`を比較した結果、`a`より`b`の方が後に並ぶ場合、`-1` (負の値) を返します。
-  - `a`と`b`を比較した結果等しいので、ソートしない場合、`0` を返します。
-  - `a`と`b`を比較した結果、`b`より`a`の方が後に並ぶ場合、`1` (正の値) を返します。
