@@ -65,24 +65,6 @@ const map: Map<number, string> = treeMap.toMap()
 const treeMap2 = TreeMap.from(map)
 ```
 
-## 既知の問題
-
-以下のように`TreeMap.prototype.forEach()`した時の処理順序は**保証していません**。
-
-```typescript
-import TreeMap from 'ts-treemap'
-
-const treeMap = new TreeMap<number, string>()
-
-treeMap.set(10, 'abc')
-treeMap.set(5, 'def')
-treeMap.set(0, 'ghi')
-
-treeMap.forEach((key, value) => {
-  // ...
-})
-```
-
 ## 注意!
 
 キーをソートするためには、比較を行うための関数を定義する必要があります。TreeMap は内部で比較関数を持っており、キーを追加するたびに、比較関数によって自動でキーをソートします。
