@@ -192,4 +192,13 @@ describe('TreeMap test', () => {
 
     expect(expetedError).toBeTruthy()
   })
+
+  it('forEach', () => {
+    const treeMap = getTreeMap()
+    const entries: [number, string][] = []
+    treeMap.forEach((value, key) => {
+      entries.push([key, value])
+    })
+    expect(Array.from(entries.values())).toStrictEqual(Array.from(treeMap.entries()))
+  })
 })

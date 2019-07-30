@@ -278,4 +278,11 @@ export default class TreeMap<K, V> extends Map {
     const filtered = this.sortedKeys.filter(existKey => this.compareFn(existKey, key) > 0)
     return filtered[0]
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public forEach(callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: any): void {
+    this.sortedKeys.forEach(k => {
+      callbackfn(this.get(k), k, this)
+    }, thisArg)
+  }
 }
