@@ -3,7 +3,7 @@ const bigIntComparator = (a: bigint, b: bigint): number => Number(a - b)
 const stringComparator = (a: string, b: string): number => a.localeCompare(b)
 const dateComparator = (a: Date, b: Date): number => a.getTime() - b.getTime()
 
-export const comparators = {
+const comparators = {
   number: numberComparator,
   string: stringComparator,
   Date: dateComparator,
@@ -12,7 +12,7 @@ export const comparators = {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const decideCompareFn = (value: unknown): ((a: any, b: any) => number) => {
+const decideCompareFn = (value: unknown): ((a: any, b: any) => number) => {
   if (typeof value === 'number') {
     return comparators.number
   }
