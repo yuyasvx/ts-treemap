@@ -5,19 +5,18 @@ a TypeScript implementation of TreeMap
 [![CI](https://circleci.com/gh/yuyasvx/ts-treemap/tree/master.svg?style=shield&circle-token=f7dfd3305577f40429c6b2046bc658cbc3614997)](https://circleci.com/gh/yuyasvx/ts-treemap)
 [![codecov](https://codecov.io/gh/yuyasvx/ts-treemap/branch/master/graph/badge.svg)](https://codecov.io/gh/yuyasvx/ts-treemap)
 
-ES2015 から追加された“Map”オブジェクトをベースに、Java でお馴染みの [TreeMap](https://docs.oracle.com/javase/jp/8/docs/api/java/util/TreeMap.html) の一部機能を TypeScript で使うことが出来ます。
+You can use some features of [TreeMap](https://docs.oracle.com/javase/8/docs/api/java/util/TreeMap.html) in Java with TypeScript.
 
-# インストール
+# Installation
 
 ```
 npm i ts-treemap --save
 ```
 
-# 使う
+# Usage
 
-ES2015 の Map と同じ要領で使うことが出来ます。
 
-## Map の作成とエントリの追加
+## Create New TreeMap and Add Entries
 
 ```typescript
 import TreeMap from 'ts-treemap'
@@ -30,7 +29,7 @@ treeMap.set(5, 'def')
 treeMap.set(0, 'ghi')
 ```
 
-## エントリの取得
+## Get Entry from TreeMap
 
 ```typescript
 // get first entry
@@ -44,7 +43,7 @@ treeMap.higherEntry(5) // [10, 'abc']
 treeMap.lowerEntry(5) // [0, 'ghi']
 ```
 
-## Map のコピー
+## Duplicate a Map
 
 ```typescript
 // copy map
@@ -58,15 +57,17 @@ const map: Map<number, string> = treeMap.toMap()
 const treeMap2 = TreeMap.from(map)
 ```
 
-# 注意!
+# Note
 
-キーをソートするためには、比較を行うための関数を定義する必要があります。TreeMap は内部で比較関数を持っており、キーを追加するたびに、比較関数によって自動でキーをソートします。
+To sort the keys, you need to define a function to perform the comparison. TreeMap internally has a comparison function, and the keys are sorted by the comparison function each time an entry is added.
 
-比較関数は、Array.prototype.sort()で用いられる[比較関数](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#説明)に準拠しています。
+The comparison function conforms to the [compare function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Description) used in `Array.prototype.sort()`.
 
-キーの型が`number`, `string`, `Date`のどれかに該当する場合は、デフォルトで用意されている関数で比較を行うので、比較関数を定義する必要はありません。（ご自身で定義することも出来ます）
 
-キーの型が上記のいずれにも該当しない場合、比較関数を与えずに TreeMap を生成してから**1 つ目のエントリを追加した時にエラーが発生します。**
+You don’t have to define the comparison function if the type of the key is `number`,` string` or `Date`, (You can also define your own)
+
+When you construct a new TreeMap without supplying a comparison function and add the first entry, an `Error` will be thrown.
+
 
 **✅ Do:**
 
