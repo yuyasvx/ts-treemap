@@ -179,7 +179,7 @@ describe('TreeMap test', () => {
     expect(treeMap.higherKey(new Date('2019-01-31'))).toStrictEqual(new Date('2019-02-11'))
   })
 
-  it('compares error', () => {
+  it('compare and throw error', () => {
     let expetedError: Error | undefined
     try {
       const treeMap = new TreeMap<TestInterface, string>()
@@ -191,5 +191,14 @@ describe('TreeMap test', () => {
     }
 
     expect(expetedError).toBeTruthy()
+  })
+
+  it('forEach', () => {
+    const treeMap = getTreeMap()
+    const entries: [number, string][] = []
+    treeMap.forEach((value, key) => {
+      entries.push([key, value])
+    })
+    expect(Array.from(entries.values())).toStrictEqual(Array.from(treeMap.entries()))
   })
 })
