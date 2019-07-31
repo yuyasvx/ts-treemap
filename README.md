@@ -1,3 +1,5 @@
+[🇯🇵](https://github.com/yuyasvx/ts-treemap/blob/master/README.md)[🇺🇸](https://github.com/yuyasvx/ts-treemap/blob/master/README-en.md)
+
 # ts-treemap
 
 a TypeScript implementation of TreeMap
