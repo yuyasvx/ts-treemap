@@ -59,14 +59,12 @@ const treeMap2 = TreeMap.from(map)
 
 # Note
 
-To sort the keys, you need to define a function to perform the comparison. TreeMap internally has a comparison function, and the keys are sorted by the comparison function each time an entry is added.
+To sort the keys, you need to define a function to compare keys in the map. Once TreeMap is constructed with comparator function, the keys are sorted by this function each time an entry is added.
 
-The comparison function conforms to the [compare function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Description) used in `Array.prototype.sort()`.
+The comparator function conforms to the [compare function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Description) used in `Array.prototype.sort()`.
 
 
-You don’t have to define the comparison function if the type of the key is `number`,` string` or `Date`. (You can also define your own)
-
-When you construct a new TreeMap without supplying a comparison function and add the first entry, an `Error` will be thrown.
+You don’t have to define the compare function if the type of the key is `number`, `string` or `Date`. But when you construct a new TreeMap without supplying a compare function and add the first entry, an `Error` will be thrown.
 
 
 **✅ Do:**
