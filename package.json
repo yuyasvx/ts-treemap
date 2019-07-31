@@ -19,6 +19,7 @@
   ],
   "author": "yuyasvx",
   "license": "MIT",
+  "repository": "github:yuyasvx/ts-treemap",
   "devDependencies": {
     "@types/jest": "^24.0.15",
     "@typescript-eslint/eslint-plugin": "^1.11.0",
