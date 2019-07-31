@@ -64,7 +64,7 @@ To sort the keys, you need to define a function to perform the comparison. TreeM
 The comparison function conforms to the [compare function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Description) used in `Array.prototype.sort()`.
 
 
-You don’t have to define the comparison function if the type of the key is `number`,` string` or `Date`, (You can also define your own)
+You don’t have to define the comparison function if the type of the key is `number`,` string` or `Date`. (You can also define your own)
 
 When you construct a new TreeMap without supplying a comparison function and add the first entry, an `Error` will be thrown.
 
