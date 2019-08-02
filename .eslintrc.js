@@ -37,7 +37,8 @@ module.exports = {
     'no-var': 'error',
     'prefer-const': 'warn',
     'prefer-template': 'warn',
-    'curly': 'warn'
+    'no-useless-constructor': 'off',
+    curly: 'warn'
   },
   parserOptions: {
     parser: '@typescript-eslint/parser'
