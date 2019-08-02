@@ -91,10 +91,13 @@ export default class TreeMap<K, V> extends Map {
    * @param value
    */
   public set(key: K, value: V): this {
+    const before = Array.from(super.keys())
     super.set(key, value)
 
     const sortedKeys = [...this.sortedKeys]
-    sortedKeys.push(key)
+    if (before.length !== Array.from(super.keys()).length) {
+      sortedKeys.push(key)
+    }
     if (sortedKeys.length === 1 && !this.specifiedCompareFn) {
       this.compareFn = decideCompareFn(sortedKeys[0])
       this.specifiedCompareFn = true
