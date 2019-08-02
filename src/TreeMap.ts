@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-class-members */
 const numberComparator = (a: number, b: number): number => a - b
 const bigIntComparator = (a: bigint, b: bigint): number => Number(a - b)
 const stringComparator = (a: string, b: string): number => a.localeCompare(b)
@@ -46,13 +47,48 @@ export default class TreeMap<K, V> extends Map {
     return this.compareFn
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private isIterable = (value: any): value is [K, V][] => {
+    if (!Array.isArray(value)) {
+      return false
+    }
+    for (const entry of value) {
+      if (!Array.isArray(entry) || entry.length !== 2) {
+        return false
+      }
+    }
+    return true
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private isCompareFn = (value: any): value is (a: K, b: K) => number => {
+    return typeof value === 'function'
+  }
+
   /**
    * @param compareFn A function that defines the sort order of the keys.
    */
-  constructor(compareFn?: (a: K, b: K) => number) {
+  constructor(compareFn?: (a: K, b: K) => number)
+  /**
+   * @param iterable Iterable object
+   * @param compareFn A function that defines the sort order of the keys.
+   */
+  constructor(iterable?: readonly (readonly [K, V])[] | null, compareFn?: (a: K, b: K) => number)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(iterableOrCompareFn?: any, compareFn?: (a: K, b: K) => number) {
     super()
-    this.compareFn = compareFn == null ? comparators.none : compareFn
-    this.specifiedCompareFn = compareFn != null
+    this.compareFn = comparators.none
+    if (this.isIterable(iterableOrCompareFn)) {
+      for (const entry of iterableOrCompareFn) {
+        this.set(...entry)
+      }
+      this.compareFn = compareFn == null ? comparators.none : compareFn
+      this.specifiedCompareFn = this.compareFn != null
+    }
+    if (this.isCompareFn(iterableOrCompareFn)) {
+      this.compareFn = iterableOrCompareFn == null ? comparators.none : iterableOrCompareFn
+      this.specifiedCompareFn = this.compareFn != null
+    }
     this.sortedKeys = []
   }
 
