@@ -24,6 +24,16 @@ describe('TreeMap test', () => {
     expect(Array.from(treeMap.keys())).toStrictEqual([0, 5, 10, 15, 20])
   })
 
+  it('add entries with the same key', () => {
+    const treeMap = getTreeMap()
+    treeMap.set(0, '123')
+    treeMap.set(0, '456')
+
+    expect(treeMap.size).toBe(5)
+    expect(Array.from(treeMap.keys())).toStrictEqual([0, 5, 10, 15, 20])
+    expect(treeMap.get(0)).toBe('456')
+  })
+
   it('delete', () => {
     const treeMap = getTreeMap()
 
