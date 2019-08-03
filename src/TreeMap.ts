@@ -74,22 +74,30 @@ export default class TreeMap<K, V> extends Map {
    * @param compareFn A function that defines the sort order of the keys.
    */
   constructor(iterable?: readonly (readonly [K, V])[] | null, compareFn?: (a: K, b: K) => number)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(iterableOrCompareFn?: any, compareFn?: (a: K, b: K) => number) {
+  constructor(iterableOrCompareFn?: unknown, compareFn?: (a: K, b: K) => number) {
     super()
     this.compareFn = comparators.none
+    this.sortedKeys = []
     if (this.isIterable(iterableOrCompareFn)) {
-      for (const entry of iterableOrCompareFn) {
-        this.set(...entry)
-      }
-      this.compareFn = compareFn == null ? comparators.none : compareFn
-      this.specifiedCompareFn = this.compareFn != null
+      this._constructor(iterableOrCompareFn, compareFn)
     }
     if (this.isCompareFn(iterableOrCompareFn)) {
-      this.compareFn = iterableOrCompareFn == null ? comparators.none : iterableOrCompareFn
-      this.specifiedCompareFn = this.compareFn != null
+      this._constructor(null, iterableOrCompareFn)
     }
-    this.sortedKeys = []
+    if (iterableOrCompareFn == null) {
+      this._constructor(null, compareFn)
+    }
+  }
+
+  private _constructor(iterable?: readonly (readonly [K, V])[] | null, compareFn?: (a: K, b: K) => number): void {
+    this.compareFn = compareFn == null ? comparators.none : compareFn
+    this.specifiedCompareFn = compareFn != null
+    if (iterable == null) {
+      return
+    }
+    for (const entry of iterable) {
+      this.set(...entry)
+    }
   }
 
   /**

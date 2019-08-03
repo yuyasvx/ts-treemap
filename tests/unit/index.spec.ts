@@ -17,6 +17,34 @@ interface TestInterface {
 }
 
 describe('TreeMap test', () => {
+  it('construct TreeMap', () => {
+    const compareFn = (a: number, b: number): number => b - a
+    const iterableArray: [number, string][] = [[1, 'a'], [2, 'b']]
+
+    const map1 = new TreeMap<number, number>(compareFn)
+    const map2 = new TreeMap<number, number>()
+    expect(map1.comparator(10, 9)).toBe(-1)
+    expect(map1.size).toBe(0)
+    expect(map2.comparator(10, 9)).toBe(0)
+    expect(map2.size).toBe(0)
+
+    const map3 = new TreeMap<number, string>(iterableArray, compareFn)
+    const map4 = new TreeMap<number, string>(iterableArray)
+    expect(map3.comparator(10, 9)).toBe(-1)
+    expect(map3.size).toBe(2)
+    expect(Array.from(map3.entries())).toStrictEqual([[2, 'b'], [1, 'a']])
+    expect(map4.comparator(10, 9)).toBe(1)
+    expect(map4.size).toBe(2)
+    expect(Array.from(map4.entries())).toStrictEqual(iterableArray)
+
+    const map5 = new TreeMap<number, string>(undefined, compareFn)
+    const map6 = new TreeMap<number, string>(undefined, undefined)
+    expect(map5.comparator(10, 9)).toBe(-1)
+    expect(map5.size).toBe(0)
+    expect(map6.comparator(10, 9)).toBe(0)
+    expect(map6.size).toBe(0)
+  })
+
   it('add', () => {
     const treeMap = getTreeMap()
 
@@ -190,17 +218,10 @@ describe('TreeMap test', () => {
   })
 
   it('compare and throw error', () => {
-    let expetedError: Error | undefined
-    try {
-      const treeMap = new TreeMap<TestInterface, string>()
+    const treeMap = new TreeMap<TestInterface, string>()
+    expect(() => {
       treeMap.set({ id: 1, content: 'a' }, 'a')
-      treeMap.set({ id: 2, content: 'b' }, 'b')
-      treeMap.set({ id: 3, content: 'c' }, 'c')
-    } catch (e) {
-      expetedError = e
-    }
-
-    expect(expetedError).toBeTruthy()
+    }).toThrow()
   })
 
   it('forEach', () => {
