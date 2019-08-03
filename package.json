@@ -1,6 +1,6 @@
 {
   "name": "ts-treemap",
-  "version": "0.0.5",
+  "version": "0.0.4",
   "description": "a TypeScript implementation of TreeMap",
   "main": "dist/TreeMap.js",
   "types": "dist/TreeMap.d.ts",
