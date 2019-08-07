@@ -129,6 +129,20 @@ export default class TreeMap<K, V> extends Map {
     return normalMap
   }
 
+  public reversedKeys(): IterableIterator<K> {
+    const keys = [...this.sortedKeys].reverse()
+    return keys.values()
+  }
+
+  public reversedMap(): TreeMap<K, V> {
+    const keys = this.reversedKeys()
+    const map = new TreeMap<K, V>(this.compareFn)
+    for (const k of keys) {
+      map.set(k, this.get(k))
+    }
+    return map
+  }
+
   /**
    * Adds or updates entry with the specified value with the specified key in this map.
    * @param key
@@ -355,6 +369,16 @@ export default class TreeMap<K, V> extends Map {
   public higherKey(key: K): K | undefined {
     const filtered = this.sortedKeys.filter(existKey => this.compareFn(existKey, key) > 0)
     return filtered[0]
+  }
+
+  public splitLower(key: K, include: boolean = true): TreeMap<K, V> {
+    const entries = Array.from(this.entries()).filter(e => this.compareFn(e[0], key) <= 0)
+    return new TreeMap(entries, this.compareFn)
+  }
+
+  public splitHigher(key: K, include: boolean = true): TreeMap<K, V> {
+    const entries = Array.from(this.entries()).filter(e => this.compareFn(e[0], key) >= 0)
+    return new TreeMap(entries, this.compareFn)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
