@@ -30,6 +30,9 @@ const treeMap = new TreeMap<number, string>()
 treeMap.set(10, 'abc')
 treeMap.set(5, 'def')
 treeMap.set(0, 'ghi')
+
+// これもOK
+const treeMap2 = new TreeMap<number, string>([[1, 'foo'], [2, 'bar']])
 ```
 
 ## エントリの取得
@@ -88,6 +91,8 @@ dateMap.set(new Date('2019-01-01'), 'foo') // OK
 // compareFn is defined
 const objectMap = new TreeMap<Day.Dayjs, string>((a, b) => a.unix() - b.unix())
 objectMap.set(Day('2019-01-01'), 'foo') // OK
+
+const objectMap2 = new TreeMap<Day.Dayjs, string>((a, b) => a.unix() - b.unix(), [[Day('2019-01-01'), 'foo']])
 ```
 
 **🛑 Don’t:**

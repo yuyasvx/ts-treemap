@@ -15,7 +15,6 @@ npm i ts-treemap --save
 
 # Usage
 
-
 ## Create New TreeMap and Add Entries
 
 ```typescript
@@ -27,6 +26,9 @@ const treeMap = new TreeMap<number, string>()
 treeMap.set(10, 'abc')
 treeMap.set(5, 'def')
 treeMap.set(0, 'ghi')
+
+// you can also create new TreeMap with iterables
+const treeMap2 = new TreeMap<number, string>([[1, 'foo'], [2, 'bar']])
 ```
 
 ## Get Entry from TreeMap
@@ -63,9 +65,7 @@ To sort the keys, you need to define a function to compare keys in the map. Once
 
 The comparator function conforms to the [compare function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Description) used in `Array.prototype.sort()`.
 
-
-You don’t have to define the compare function if the type of the key is `number`, `string` or `Date`. But when you construct a new TreeMap without supplying a compare function and add the first entry, an `Error` will be thrown.
-
+You don’t have to define the compare function if the type of the key is `number`, `string` or `Date`. Otherwise, when you construct a new TreeMap without supplying a compare function and add the first entry, an `Error` will be thrown.
 
 **✅ Do:**
 
@@ -85,6 +85,8 @@ dateMap.set(new Date('2019-01-01'), 'foo') // OK
 // compareFn is defined
 const objectMap = new TreeMap<Day.Dayjs, string>((a, b) => a.unix() - b.unix())
 objectMap.set(Day('2019-01-01'), 'foo') // OK
+
+const objectMap2 = new TreeMap<Day.Dayjs, string>((a, b) => a.unix() - b.unix(), [[Day('2019-01-01'), 'foo']])
 ```
 
 **🛑 Don’t:**
