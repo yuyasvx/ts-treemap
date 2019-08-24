@@ -371,6 +371,11 @@ export default class TreeMap<K, V> extends Map {
     return filtered[0]
   }
 
+  /**
+   * Returns a new TreeMap with entries containing keys less than (or equal to) `key` in this map.
+   * @param key
+   * @param include If `true`, split this map including an entry associated with `key`. Default is `true`.
+   */
   public splitLower(key: K, include: boolean = true): TreeMap<K, V> {
     const entries = Array.from(this.entries()).filter(e => {
       const than = this.compare(e[0], key) < 0
@@ -379,6 +384,11 @@ export default class TreeMap<K, V> extends Map {
     return new TreeMap(entries, this.compareFn)
   }
 
+  /**
+   * Returns a new TreeMap with entries containing keys greater than (or equal to) `key` in this map.
+   * @param key
+   * @param include If `true`, split this map including an entry associated with `key`. Default is `true`.
+   */
   public splitHigher(key: K, include: boolean = true): TreeMap<K, V> {
     const entries = Array.from(this.entries()).filter(e => {
       const than = this.compare(e[0], key) > 0
