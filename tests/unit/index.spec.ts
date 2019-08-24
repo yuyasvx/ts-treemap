@@ -43,9 +43,19 @@ describe('TreeMap test', () => {
     expect(map5.size).toBe(0)
     expect(map6.comparator(10, 9)).toBe(0)
     expect(map6.size).toBe(0)
+
+    const plainMap = new Map([[2, 'b'], [1, 'a']])
+    const map7 = new TreeMap(plainMap.entries())
+    expect(Array.from(map7.entries())).toStrictEqual([[1, 'a'], [2, 'b']])
   })
 
-  it('add', () => {
+  it('reverse', () => {
+    const keys = getTreeMap().reverseKeys()
+
+    expect(Array.from(keys)).toStrictEqual([20, 15, 10, 5, 0])
+  })
+
+  it('set', () => {
     const treeMap = getTreeMap()
 
     expect(treeMap.size).toBe(5)
@@ -222,6 +232,22 @@ describe('TreeMap test', () => {
     expect(() => {
       treeMap.set({ id: 1, content: 'a' }, 'a')
     }).toThrow()
+  })
+
+  it('split', () => {
+    const lowerMap = getTreeMap().splitLower(10)
+    expect(Array.from(lowerMap.keys())).toStrictEqual([0, 5, 10])
+
+    const higherMap = getTreeMap().splitHigher(10)
+    expect(Array.from(higherMap.keys())).toStrictEqual([10, 15, 20])
+  })
+
+  it('split include:false', () => {
+    const lowerMap = getTreeMap().splitLower(10, false)
+    expect(Array.from(lowerMap.keys())).toStrictEqual([0, 5])
+
+    const higherMap = getTreeMap().splitHigher(10, false)
+    expect(Array.from(higherMap.keys())).toStrictEqual([15, 20])
   })
 
   it('forEach', () => {

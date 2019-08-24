@@ -5,18 +5,19 @@ a TypeScript implementation of TreeMap
 [![CI](https://circleci.com/gh/yuyasvx/ts-treemap/tree/master.svg?style=shield&circle-token=f7dfd3305577f40429c6b2046bc658cbc3614997)](https://circleci.com/gh/yuyasvx/ts-treemap)
 [![codecov](https://codecov.io/gh/yuyasvx/ts-treemap/branch/master/graph/badge.svg)](https://codecov.io/gh/yuyasvx/ts-treemap)
 
-You can use some features of [TreeMap](https://docs.oracle.com/javase/8/docs/api/java/util/TreeMap.html) in Java with TypeScript.
+ES2015 から追加された“Map”オブジェクトをベースに、Java でお馴染みの [TreeMap](https://docs.oracle.com/javase/jp/8/docs/api/java/util/TreeMap.html) の一部機能を TypeScript で使うことが出来ます。
 
-# Installation
+# インストール
 
 ```
 npm i ts-treemap --save
 ```
 
-# Usage
+# 使う
 
+ES2015 の Map と同じ要領で使うことが出来ます。
 
-## Create New TreeMap and Add Entries
+## Map の作成とエントリの追加
 
 ```typescript
 import TreeMap from 'ts-treemap'
@@ -27,9 +28,12 @@ const treeMap = new TreeMap<number, string>()
 treeMap.set(10, 'abc')
 treeMap.set(5, 'def')
 treeMap.set(0, 'ghi')
+
+// これもOK
+const treeMap2 = new TreeMap<number, string>([[1, 'foo'], [2, 'bar']])
 ```
 
-## Get Entry from TreeMap
+## エントリの取得
 
 ```typescript
 // get first entry
@@ -43,7 +47,7 @@ treeMap.higherEntry(5) // [10, 'abc']
 treeMap.lowerEntry(5) // [0, 'ghi']
 ```
 
-## Duplicate a Map
+## Map のコピー
 
 ```typescript
 // copy map
@@ -57,15 +61,15 @@ const map: Map<number, string> = treeMap.toMap()
 const treeMap2 = TreeMap.from(map)
 ```
 
-# Note
+# 注意!
 
-To sort the keys, you need to define a function to compare keys in the map. Once TreeMap is constructed with comparator function, the keys are sorted by this function each time an entry is added.
+キーをソートするためには、比較を行うための関数を定義する必要があります。TreeMap は内部で比較関数を持っており、キーを追加するたびに、比較関数によって自動でキーをソートします。
 
-The comparator function conforms to the [compare function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Description) used in `Array.prototype.sort()`.
+比較関数は、Array.prototype.sort()で用いられる[比較関数](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#説明)に準拠しています。
 
+キーの型が`number`, `string`, `Date`のどれかに該当する場合は、デフォルトで用意されている関数で比較を行うので、比較関数を定義する必要はありません。（ご自身で定義することも出来ます）
 
-You don’t have to define the compare function if the type of the key is `number`, `string` or `Date`. But when you construct a new TreeMap without supplying a compare function and add the first entry, an `Error` will be thrown.
-
+キーの型が上記のいずれにも該当しない場合、比較関数を与えずに TreeMap を生成してから**1 つ目のエントリを追加した時にエラーが発生します。**
 
 **✅ Do:**
 
@@ -85,6 +89,8 @@ dateMap.set(new Date('2019-01-01'), 'foo') // OK
 // compareFn is defined
 const objectMap = new TreeMap<Day.Dayjs, string>((a, b) => a.unix() - b.unix())
 objectMap.set(Day('2019-01-01'), 'foo') // OK
+
+const objectMap2 = new TreeMap<Day.Dayjs, string>([[Day('2019-01-01'), 'foo']], (a, b) => a.unix() - b.unix())
 ```
 
 **🛑 Don’t:**
