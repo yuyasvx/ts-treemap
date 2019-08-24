@@ -129,18 +129,14 @@ export default class TreeMap<K, V> extends Map {
     return normalMap
   }
 
-  public reversedKeys(): IterableIterator<K> {
+  public reverseKeys(): IterableIterator<K> {
     const keys = [...this.sortedKeys].reverse()
     return keys.values()
   }
 
-  public reversedMap(): TreeMap<K, V> {
-    const keys = this.reversedKeys()
-    const map = new TreeMap<K, V>(this.compareFn)
-    for (const k of keys) {
-      map.set(k, this.get(k))
-    }
-    return map
+  public reverseMap(): TreeMap<K, V> {
+    // TODO not implemented
+    return this.duplicate()
   }
 
   /**
@@ -372,12 +368,18 @@ export default class TreeMap<K, V> extends Map {
   }
 
   public splitLower(key: K, include: boolean = true): TreeMap<K, V> {
-    const entries = Array.from(this.entries()).filter(e => this.compareFn(e[0], key) <= 0)
+    const entries = Array.from(this.entries()).filter(e => {
+      const than = this.compareFn(e[0], key) < 0
+      return include ? than || this.compareFn(e[0], key) === 0 : than
+    })
     return new TreeMap(entries, this.compareFn)
   }
 
   public splitHigher(key: K, include: boolean = true): TreeMap<K, V> {
-    const entries = Array.from(this.entries()).filter(e => this.compareFn(e[0], key) >= 0)
+    const entries = Array.from(this.entries()).filter(e => {
+      const than = this.compareFn(e[0], key) > 0
+      return include ? than || this.compareFn(e[0], key) === 0 : than
+    })
     return new TreeMap(entries, this.compareFn)
   }
 
