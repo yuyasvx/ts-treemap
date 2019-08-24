@@ -43,19 +43,19 @@ export default class TreeMap<K, V> extends Map {
 
   private specifiedCompareFn: boolean = false
 
+  // private reverseOrder: boolean = false
+
   get comparator(): (a: K, b: K) => number {
     return this.compareFn
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private isIterable = (value: any): value is [K, V][] => {
-    if (!Array.isArray(value)) {
+  private isIterable = (value: unknown): value is Iterable<readonly [K, V]> => {
+    if (value == null) {
       return false
     }
-    for (const entry of value) {
-      if (!Array.isArray(entry) || entry.length !== 2) {
-        return false
-      }
+    const itr = value as Iterable<readonly [K, V]>
+    if (itr[Symbol.iterator] == null) {
+      return false
     }
     return true
   }
@@ -63,6 +63,12 @@ export default class TreeMap<K, V> extends Map {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private isCompareFn = (value: any): value is (a: K, b: K) => number => {
     return typeof value === 'function'
+  }
+
+  private compare(a: K, b: K): number {
+    const val = Math.sign(this.compareFn(a, b))
+    // return this.reverseOrder ? -val : val
+    return val
   }
 
   /**
@@ -73,7 +79,7 @@ export default class TreeMap<K, V> extends Map {
    * @param iterable Iterable object
    * @param compareFn A function that defines the sort order of the keys.
    */
-  constructor(iterable?: readonly (readonly [K, V])[] | null, compareFn?: (a: K, b: K) => number)
+  constructor(iterable?: Iterable<readonly [K, V]> | null, compareFn?: (a: K, b: K) => number)
   constructor(iterableOrCompareFn?: unknown, compareFn?: (a: K, b: K) => number) {
     super()
     this.compareFn = comparators.none
@@ -87,9 +93,12 @@ export default class TreeMap<K, V> extends Map {
     if (iterableOrCompareFn == null) {
       this._constructor(null, compareFn)
     }
+    // if (reverse) {
+    //   this.reverseOrder = reverse
+    // }
   }
 
-  private _constructor(iterable?: readonly (readonly [K, V])[] | null, compareFn?: (a: K, b: K) => number): void {
+  private _constructor(iterable?: Iterable<readonly [K, V]> | null, compareFn?: (a: K, b: K) => number): void {
     this.compareFn = compareFn == null ? comparators.none : compareFn
     this.specifiedCompareFn = compareFn != null
     if (iterable == null) {
@@ -134,11 +143,6 @@ export default class TreeMap<K, V> extends Map {
     return keys.values()
   }
 
-  public reverseMap(): TreeMap<K, V> {
-    // TODO not implemented
-    return this.duplicate()
-  }
-
   /**
    * Adds or updates entry with the specified value with the specified key in this map.
    * @param key
@@ -178,7 +182,7 @@ export default class TreeMap<K, V> extends Map {
    */
   public delete(key: K): boolean {
     if (super.delete(key)) {
-      this.sortedKeys = this.sortedKeys.filter(existKey => this.compareFn(existKey, key) !== 0)
+      this.sortedKeys = this.sortedKeys.filter(existKey => this.compare(existKey, key) !== 0)
       return true
     }
     return false
@@ -294,7 +298,7 @@ export default class TreeMap<K, V> extends Map {
    * @param key
    */
   public floorKey(key: K): K | undefined {
-    const filtered = this.sortedKeys.filter(existKey => this.compareFn(existKey, key) <= 0)
+    const filtered = this.sortedKeys.filter(existKey => this.compare(existKey, key) <= 0)
     return filtered.reverse()[0]
   }
 
@@ -317,7 +321,7 @@ export default class TreeMap<K, V> extends Map {
    * @param key
    */
   public ceilingKey(key: K): K | undefined {
-    const filtered = this.sortedKeys.filter(existKey => this.compareFn(existKey, key) >= 0)
+    const filtered = this.sortedKeys.filter(existKey => this.compare(existKey, key) >= 0)
     return filtered[0]
   }
 
@@ -340,7 +344,7 @@ export default class TreeMap<K, V> extends Map {
    * @param key
    */
   public lowerKey(key: K): K | undefined {
-    const filtered = this.sortedKeys.filter(existKey => this.compareFn(existKey, key) < 0)
+    const filtered = this.sortedKeys.filter(existKey => this.compare(existKey, key) < 0)
     return filtered.reverse()[0]
   }
 
@@ -363,22 +367,22 @@ export default class TreeMap<K, V> extends Map {
    * @param key
    */
   public higherKey(key: K): K | undefined {
-    const filtered = this.sortedKeys.filter(existKey => this.compareFn(existKey, key) > 0)
+    const filtered = this.sortedKeys.filter(existKey => this.compare(existKey, key) > 0)
     return filtered[0]
   }
 
   public splitLower(key: K, include: boolean = true): TreeMap<K, V> {
     const entries = Array.from(this.entries()).filter(e => {
-      const than = this.compareFn(e[0], key) < 0
-      return include ? than || this.compareFn(e[0], key) === 0 : than
+      const than = this.compare(e[0], key) < 0
+      return include ? than || this.compare(e[0], key) === 0 : than
     })
     return new TreeMap(entries, this.compareFn)
   }
 
   public splitHigher(key: K, include: boolean = true): TreeMap<K, V> {
     const entries = Array.from(this.entries()).filter(e => {
-      const than = this.compareFn(e[0], key) > 0
-      return include ? than || this.compareFn(e[0], key) === 0 : than
+      const than = this.compare(e[0], key) > 0
+      return include ? than || this.compare(e[0], key) === 0 : than
     })
     return new TreeMap(entries, this.compareFn)
   }
