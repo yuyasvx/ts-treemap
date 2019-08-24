@@ -29,7 +29,7 @@ treeMap.set(10, 'abc')
 treeMap.set(5, 'def')
 treeMap.set(0, 'ghi')
 
-// you can also create new TreeMap with iterables
+// you can also create new TreeMap with iterable
 const treeMap2 = new TreeMap<number, string>([[1, 'foo'], [2, 'bar']])
 ```
 
