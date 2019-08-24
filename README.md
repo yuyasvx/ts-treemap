@@ -29,7 +29,7 @@ treeMap.set(10, 'abc')
 treeMap.set(5, 'def')
 treeMap.set(0, 'ghi')
 
-// you can also create new TreeMap with iterables
+// you can also create new TreeMap with iterable
 const treeMap2 = new TreeMap<number, string>([[1, 'foo'], [2, 'bar']])
 ```
 
@@ -88,7 +88,7 @@ dateMap.set(new Date('2019-01-01'), 'foo') // OK
 const objectMap = new TreeMap<Day.Dayjs, string>((a, b) => a.unix() - b.unix())
 objectMap.set(Day('2019-01-01'), 'foo') // OK
 
-const objectMap2 = new TreeMap<Day.Dayjs, string>((a, b) => a.unix() - b.unix(), [[Day('2019-01-01'), 'foo']])
+const objectMap2 = new TreeMap<Day.Dayjs, string>([[Day('2019-01-01'), 'foo']], (a, b) => a.unix() - b.unix())
 ```
 
 **🛑 Don’t:**
