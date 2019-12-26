@@ -69,6 +69,7 @@ describe('TreeMap test', () => {
 
     expect(treeMap.size).toBe(5)
     expect(Array.from(treeMap.keys())).toStrictEqual([0, 5, 10, 15, 20])
+    expect(treeMap.get(999)).toBeUndefined()
   })
 
   it('overwrites value', () => {

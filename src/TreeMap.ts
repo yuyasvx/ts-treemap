@@ -398,8 +398,8 @@ export default class TreeMap<K, V> extends Map {
    */
   public splitLower(key: K, include: boolean = true): TreeMap<K, V> {
     const entries = Array.from(this.entries()).filter(e => {
-      const than = this.compare(e[0], key) < 0
-      return include ? than || this.compare(e[0], key) === 0 : than
+      const range = this.compare(e[0], key) < 0
+      return include ? range || this.compare(e[0], key) === 0 : range
     })
     return new TreeMap(entries, this.compareFn)
   }
@@ -411,8 +411,8 @@ export default class TreeMap<K, V> extends Map {
    */
   public splitHigher(key: K, include: boolean = true): TreeMap<K, V> {
     const entries = Array.from(this.entries()).filter(e => {
-      const than = this.compare(e[0], key) > 0
-      return include ? than || this.compare(e[0], key) === 0 : than
+      const range = this.compare(e[0], key) > 0
+      return include ? range || this.compare(e[0], key) === 0 : range
     })
     return new TreeMap(entries, this.compareFn)
   }
