@@ -57,12 +57,21 @@ describe('TreeMap test', () => {
 
   it('set', () => {
     const treeMap = getTreeMap()
+    const keys = [20, 15, 10, 5, 0]
+    const values = ['e', 'd', 'c', 'b', 'a']
+    keys.forEach((k, i) => {
+      expect(treeMap.get(k)).toBe(values[i])
+    })
+  })
+
+  it('get', () => {
+    const treeMap = getTreeMap()
 
     expect(treeMap.size).toBe(5)
     expect(Array.from(treeMap.keys())).toStrictEqual([0, 5, 10, 15, 20])
   })
 
-  it('add entries with the same key', () => {
+  it('overwrites value', () => {
     const treeMap = getTreeMap()
     treeMap.set(0, '123')
     treeMap.set(0, '456')
@@ -70,6 +79,11 @@ describe('TreeMap test', () => {
     expect(treeMap.size).toBe(5)
     expect(Array.from(treeMap.keys())).toStrictEqual([0, 5, 10, 15, 20])
     expect(treeMap.get(0)).toBe('456')
+
+    const treeMap2 = new TreeMap<Date, string>()
+    treeMap2.set(new Date('2020-01-01'), 'a')
+    treeMap2.set(new Date('2020-01-01'), 'b')
+    expect(treeMap2.get(new Date('2020-01-01'))).toBe('b')
   })
 
   it('delete', () => {
