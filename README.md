@@ -73,10 +73,46 @@ This comparison function conforms to the [compare function](https://developer.mo
 
 You don’t have to define the compare function if the type of the key is `number`, `string` or `Date`.
 
-If you want to use other types as keys, you can use one of the following methods to generate a TreeMap
+If you want to use other types as keys, you can use one of the following methods to generate a TreeMap.
 
-- Passing a comparison function to the constructor
-- Class which has the comparison function `compare()`.
+**Method 1: Pass the comparison function to the constructor to create a map**
+
+```typescript
+import TreeMap from 'ts-treemap'
+
+interface IKeyObject {
+  value: number
+}
+
+const objectMap = new TreeMap<IKeyObject, string>((a, b) => a.value - b.value)
+objectMap.set({ value: 1 }, 'foo') // OK
+```
+
+**Method 2: Use the class which has the comparison function `compare()` as a key**
+
+```typescript
+import TreeMap, { Comparable } from 'ts-treemap'
+
+// A class that is defined compare function
+class ExampleObject implements Comparable<ExampleObject> {
+  value: number
+
+  constructor(value: number) {
+    this.value = value
+  }
+
+  compare(object: ExampleObject) {
+    return this.value - object.value
+  }
+}
+
+const map = new TreeMap<ExampleObject, string>()
+map.set(new ExampleObject(1), 'a') // OK
+```
+
+(If both are satisfied, method 1 takes precedence.)
+
+If TreeMap is created without passing parameters in the above case, `Error` will be thrown **when the first entry is added. **
 
 **✅ Do:**
 

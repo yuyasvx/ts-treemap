@@ -75,10 +75,41 @@ ES2015 の Map は、エントリの追加時、キーが重複しているか�
 
 上記以外の型をキーとしたい場合は、次のいずれかの方法で TreeMap を生成します：
 
-- コンストラクタに比較関数を渡す
-- 比較関数`compare()`を持っているクラス
+**方法1：コンストラクタに比較関数を渡してマップを生成**
 
-それ以外の場合で比較関数を与えずに TreeMap を生成した場合は、**1 つ目のエントリを追加した時にエラーが発生します。**
+```typescript
+import TreeMap from 'ts-treemap'
+import Day from 'dayjs'
+
+const objectMap = new TreeMap<Day.Dayjs, string>((a, b) => a.unix() - b.unix())
+objectMap.set(Day('2019-01-01'), 'foo') // OK
+```
+
+**方法2：比較関数`compare()`を持っているクラスをキーにする**
+
+```typescript
+import TreeMap, { Comparable } from 'ts-treemap'
+
+// A class that is defined compare function
+class ExampleObject implements Comparable<ExampleObject> {
+  value: number
+
+  constructor(value: number) {
+    this.value = value
+  }
+
+  compare(object: ExampleObject) {
+    return this.value - object.value
+  }
+}
+
+const map = new TreeMap<ExampleObject, string>()
+map.set(new ExampleObject(1), 'a') // OK
+```
+
+（なお、両方とも満たした場合は方法1が優先されます）
+
+上記の場合で比較関数を渡さずに TreeMap を生成した場合は、**1 つ目のエントリを追加した時にエラーがスローされます。**
 
 **✅ Do:**
 
@@ -100,27 +131,6 @@ const objectMap = new TreeMap<Day.Dayjs, string>((a, b) => a.unix() - b.unix())
 objectMap.set(Day('2019-01-01'), 'foo') // OK
 
 const objectMap2 = new TreeMap<Day.Dayjs, string>([[Day('2019-01-01'), 'foo']], (a, b) => a.unix() - b.unix())
-```
-
-```typescript
-import TreeMap from 'ts-treemap'
-import Day from 'dayjs'
-
-// A class that is defined compare function
-class ExampleObject implements Comparable<ExampleObject> {
-  value: number
-
-  constructor(value: number) {
-    this.value = value
-  }
-
-  compare(object: ExampleObject) {
-    return this.value - object.value
-  }
-}
-
-const map = new TreeMap<ExampleObject, string>()
-map.set(new ExampleObject(1), 'a') // OK
 ```
 
 **🛑 Don’t:**

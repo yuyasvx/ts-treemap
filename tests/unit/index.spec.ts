@@ -67,6 +67,13 @@ describe('TreeMap test', () => {
     comparableObjectMap.set(new ComparableTest(2), 'b')
     comparableObjectMap.set(new ComparableTest(1), 'd')
     expect(Array.from(comparableObjectMap.values())).toStrictEqual(['d', 'b', 'c'])
+
+    const comparableObjectMap2: TreeMap<ComparableTest, string> = new TreeMap((a, b) => b.value - a.value)
+    comparableObjectMap2.set(new ComparableTest(3), 'c')
+    comparableObjectMap2.set(new ComparableTest(1), 'a')
+    comparableObjectMap2.set(new ComparableTest(2), 'b')
+    comparableObjectMap2.set(new ComparableTest(1), 'd')
+    expect(Array.from(comparableObjectMap2.values())).toStrictEqual(['c', 'b', 'd'])
   })
 
   it('reverse', () => {
