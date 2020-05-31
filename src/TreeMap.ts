@@ -1,3 +1,6 @@
+import { isComparable, isDate, isIterable } from './Util'
+import { Comparable } from './Types'
+
 /* eslint-disable no-dupe-class-members */
 const numberComparator = (a: number, b: number): number => a - b
 const bigIntComparator = (a: bigint, b: bigint): number => Number(a - b)
@@ -23,9 +26,13 @@ const decideCompareFn = (value: unknown): ((a: any, b: any) => number) => {
   if (typeof value === 'bigint') {
     return comparators.bigInt
   }
-  const toString = Object.prototype.toString
-  if (toString.call(value).endsWith('Date]')) {
+  if (isDate(value)) {
     return comparators.Date
+  }
+  if (isComparable(value)) {
+    return (o1: Comparable<unknown>, o2: Comparable<unknown>): number => {
+      return o1.compare(o2)
+    }
   }
   throw new Error(
     'Cannot sort keys in this map. You have to specify compareFn if the type of key in this map is not number, string, or Date.'
@@ -49,17 +56,6 @@ export default class TreeMap<K, V> extends Map {
     return this.compareFn
   }
 
-  private isIterable = (value: unknown): value is Iterable<readonly [K, V]> => {
-    if (value == null) {
-      return false
-    }
-    const itr = value as Iterable<readonly [K, V]>
-    if (itr[Symbol.iterator] == null) {
-      return false
-    }
-    return true
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private isCompareFn = (value: any): value is (a: K, b: K) => number => {
     return typeof value === 'function'
@@ -76,15 +72,33 @@ export default class TreeMap<K, V> extends Map {
    */
   constructor(compareFn?: (a: K, b: K) => number)
   /**
+   * @param entries entries
+   * @param compareFn A function that defines the sort order of the keys.
+   */
+  constructor(entries?: readonly (readonly [K, V])[] | null, compareFn?: (a: K, b: K) => number)
+  /**
    * @param iterable Iterable object
    * @param compareFn A function that defines the sort order of the keys.
    */
-  constructor(iterable?: Iterable<readonly [K, V]> | null, compareFn?: (a: K, b: K) => number)
-  constructor(iterableOrCompareFn?: unknown, compareFn?: (a: K, b: K) => number) {
+  constructor(iterable?: IterableIterator<[K, V]>, compareFn?: (a: K, b: K) => number)
+  /**
+   * @param map `Map` object
+   * @param compareFn A function that defines the sort order of the keys.
+   */
+  constructor(map?: Map<K, V>, compareFn?: (a: K, b: K) => number)
+  constructor(
+    iterableOrCompareFn?:
+      | readonly (readonly [K, V])[]
+      | IterableIterator<[K, V]>
+      | Map<K, V>
+      | ((a: K, b: K) => number)
+      | null,
+    compareFn?: (a: K, b: K) => number
+  ) {
     super()
     this.compareFn = comparators.none
     this.sortedKeys = []
-    if (this.isIterable(iterableOrCompareFn)) {
+    if (isIterable<K, V>(iterableOrCompareFn)) {
       this._constructor(iterableOrCompareFn, compareFn)
     }
     if (this.isCompareFn(iterableOrCompareFn)) {
@@ -98,7 +112,7 @@ export default class TreeMap<K, V> extends Map {
     // }
   }
 
-  private _constructor(iterable?: Iterable<readonly [K, V]> | null, compareFn?: (a: K, b: K) => number): void {
+  private _constructor(iterable: Iterable<readonly [K, V]> | null, compareFn?: (a: K, b: K) => number): void {
     this.compareFn = compareFn == null ? comparators.none : compareFn
     this.specifiedCompareFn = compareFn != null
     if (iterable == null) {
@@ -417,10 +431,11 @@ export default class TreeMap<K, V> extends Map {
     return new TreeMap(entries, this.compareFn)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public forEach(callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: any): void {
+  public forEach(callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: unknown): void {
     Array.from(this.entries()).forEach(([k, v]) => {
       callbackfn(v, k, this)
     }, thisArg)
   }
 }
+
+export * from './Types'

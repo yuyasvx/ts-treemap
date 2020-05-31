@@ -34,6 +34,7 @@ module.exports = {
     //   { accessibility: 'explicit', overrides: { constructor: 'off' } }
     // ],
     'import/no-unresolved': 'off',
+    'import/named': 'off',
     'no-var': 'error',
     'prefer-const': 'warn',
     'prefer-template': 'warn',
