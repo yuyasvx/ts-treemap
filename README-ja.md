@@ -90,7 +90,6 @@ objectMap.set(Day('2019-01-01'), 'foo') // OK
 ```typescript
 import TreeMap, { Comparable } from 'ts-treemap'
 
-// A class that is defined compare function
 class ExampleObject implements Comparable<ExampleObject> {
   value: number
 

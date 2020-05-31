@@ -93,7 +93,6 @@ objectMap.set({ value: 1 }, 'foo') // OK
 ```typescript
 import TreeMap, { Comparable } from 'ts-treemap'
 
-// A class that is defined compare function
 class ExampleObject implements Comparable<ExampleObject> {
   value: number
 
@@ -112,7 +111,7 @@ map.set(new ExampleObject(1), 'a') // OK
 
 (If both are satisfied, method 1 takes precedence.)
 
-If TreeMap is created without passing parameters in the above case, `Error` will be thrown **when the first entry is added. **
+If TreeMap is created without passing parameters in the above case, `Error` will be thrown **when the first entry is added.**
 
 **✅ Do:**
 
