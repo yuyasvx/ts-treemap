@@ -61,15 +61,54 @@ const map: Map<number, string> = treeMap.toMap()
 const treeMap2 = TreeMap.from(map)
 ```
 
-# 注意!
+# 重要！
 
-キーをソートするためには、比較を行うための関数を定義する必要があります。TreeMap は内部で比較関数を持っており、キーを追加するたびに、比較関数によって自動でキーをソートします。
+TreeMap にエントリを追加したり、キーをソートするためには、**比較を行うための関数**を定義する必要があります。TreeMap は内部で比較関数を持っており、キーを追加するたびに、比較関数によって自動でキーをソートします。
+
+ES2015 の Map は、エントリの追加時、キーが重複しているかの判定は[“same-value-zero”アルゴリズム](https://developer.mozilla.org/ja/docs/Web/JavaScript/Equality_comparisons_and_sameness)を用いています。“same-value-zero”アルゴリズムは、オブジェクト同士を比較する際、“**===**” を用いて等価性を判断します（+0 と-0 は同じ）。これは、キーが同一のエントリを複数回追加する際、それらのキーの型が`Date`型のようなオブジェクト型である場合、正常に重複判定が行われないことを意味します。
+
+この問題を避けるため、TreeMap ではキーの追加時に“same-value”アルゴリズムは使わず、**比較関数**を用いて、登録済みのキーと追加時のキーを比較し、比較関数の返却値が 0 かどうかでキーの重複を判断します。
 
 比較関数は、Array.prototype.sort()で用いられる[比較関数](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#説明)に準拠しています。
 
-キーの型が`number`, `string`, `Date`のどれかに該当する場合は、デフォルトで用意されている関数で比較を行うので、比較関数を定義する必要はありません。（ご自身で定義することも出来ます）
+キーの型が`number`, `string`, `Date`のいずれかである場合は、デフォルトで用意されている関数で比較を行うので、比較関数を定義する必要はありません。
 
-キーの型が上記のいずれにも該当しない場合、比較関数を与えずに TreeMap を生成してから**1 つ目のエントリを追加した時にエラーが発生します。**
+上記以外の型をキーとしたい場合は、次のいずれかの方法で TreeMap を生成します：
+
+**方法1：コンストラクタに比較関数を渡してマップを生成**
+
+```typescript
+import TreeMap from 'ts-treemap'
+import Day from 'dayjs'
+
+const objectMap = new TreeMap<Day.Dayjs, string>((a, b) => a.unix() - b.unix())
+objectMap.set(Day('2019-01-01'), 'foo') // OK
+```
+
+**方法2：比較関数`compare()`を持っているクラスをキーにする**
+
+```typescript
+import TreeMap, { Comparable } from 'ts-treemap'
+
+class ExampleObject implements Comparable<ExampleObject> {
+  value: number
+
+  constructor(value: number) {
+    this.value = value
+  }
+
+  compare(object: ExampleObject) {
+    return this.value - object.value
+  }
+}
+
+const map = new TreeMap<ExampleObject, string>()
+map.set(new ExampleObject(1), 'a') // OK
+```
+
+（なお、両方とも満たした場合は方法1が優先されます）
+
+上記の場合で比較関数を渡さずに TreeMap を生成した場合は、**1 つ目のエントリを追加した時にエラーがスローされます。**
 
 **✅ Do:**
 

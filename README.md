@@ -1,4 +1,4 @@
-[🇯🇵 日本語はここ](https://github.com/yuyasvx/ts-treemap/blob/master/README.md)
+[🇯🇵 日本語はここ](https://github.com/yuyasvx/ts-treemap/blob/master/README-ja.md)
 
 # ts-treemap
 
@@ -63,11 +63,55 @@ const treeMap2 = TreeMap.from(map)
 
 # Note
 
-To sort the keys, you need to define a function to compare keys in the map. Once TreeMap is constructed with comparator function, the keys are sorted by this function each time an entry is added.
+In order to sort keys, you need to define a comparison function, and TreeMap has an internal comparison function that automatically sorts keys each time you add them.
 
-The comparator function conforms to the [compare function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Description) used in `Array.prototype.sort()`.
+The ES2015 Map uses the "Same-value-zero" algorithm to determine if there are duplicate keys when an entry is added. The algorithm uses "===" to determine equivalence when comparing objects (but +0 and -0 are considered equal). This means that when you add multiple entries with the same key, the duplicate check will not work correctly if the type of key is object (such as `Date`).
 
-You don’t have to define the compare function if the type of the key is `number`, `string` or `Date`. Otherwise, when you construct a new TreeMap without supplying a compare function and add the first entry, an `Error` will be thrown.
+To avoid this problem, TreeMap does not use that algorithm when adding keys, but uses a comparison function. If the return value of the comparison function is 0, the key is considered to be a duplicate.
+
+This comparison function conforms to the [compare function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Description) used in `Array.prototype.sort()`.
+
+You don’t have to define the compare function if the type of the key is `number`, `string` or `Date`.
+
+If you want to use other types as keys, you can use one of the following methods to generate a TreeMap.
+
+**Method 1: Pass the comparison function to the constructor to create a map**
+
+```typescript
+import TreeMap from 'ts-treemap'
+
+interface IKeyObject {
+  value: number
+}
+
+const objectMap = new TreeMap<IKeyObject, string>((a, b) => a.value - b.value)
+objectMap.set({ value: 1 }, 'foo') // OK
+```
+
+**Method 2: Use the class which has the comparison function `compare()` as a key**
+
+```typescript
+import TreeMap, { Comparable } from 'ts-treemap'
+
+class ExampleObject implements Comparable<ExampleObject> {
+  value: number
+
+  constructor(value: number) {
+    this.value = value
+  }
+
+  compare(object: ExampleObject) {
+    return this.value - object.value
+  }
+}
+
+const map = new TreeMap<ExampleObject, string>()
+map.set(new ExampleObject(1), 'a') // OK
+```
+
+(If both are satisfied, method 1 takes precedence.)
+
+If TreeMap is created without passing parameters in the above case, `Error` will be thrown **when the first entry is added.**
 
 **✅ Do:**
 
