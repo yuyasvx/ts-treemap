@@ -295,6 +295,29 @@ describe('TreeMap test', () => {
     expect(Array.from(higherMap.keys())).toStrictEqual([15, 20])
   })
 
+  it('range', () => {
+    const range = getTreeMap().range(5, 15)
+    expect(Array.from(range.keys())).toStrictEqual([5, 10, 15])
+
+    const rangeSoft = getTreeMap().range(4, 16)
+    expect(Array.from(rangeSoft.keys())).toStrictEqual([5, 10, 15])
+  })
+
+  it('range exclude lower', () => {
+    const range = getTreeMap().range(5, 15, false)
+    expect(Array.from(range.keys())).toStrictEqual([10, 15])
+  })
+
+  it('range exclude higher', () => {
+    const range = getTreeMap().range(5, 15, true, false)
+    expect(Array.from(range.keys())).toStrictEqual([5, 10])
+  })
+
+  it('range exclude both', () => {
+    const range = getTreeMap().range(5, 15, false, false)
+    expect(Array.from(range.keys())).toStrictEqual([10])
+  })
+
   it('forEach', () => {
     const treeMap = getTreeMap()
     const entries: [number, string][] = []
@@ -303,4 +326,6 @@ describe('TreeMap test', () => {
     })
     expect(Array.from(entries.values())).toStrictEqual(Array.from(treeMap.entries()))
   })
+
+
 })
