@@ -326,6 +326,4 @@ describe('TreeMap test', () => {
     })
     expect(Array.from(entries.values())).toStrictEqual(Array.from(treeMap.entries()))
   })
-
-
 })
