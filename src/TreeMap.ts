@@ -431,6 +431,21 @@ export default class TreeMap<K, V> extends Map {
     return new TreeMap(entries, this.compareFn)
   }
 
+  /**
+   * Returns a new TreeMap with entries containing keys greater than (or equal to) `lowerKey`, and entries containing
+   * keys less than (or equal to) `higherKey` in this map
+   * @see splitLower
+   * @see splitHigher
+   * @param lowerKey
+   * @param higherKey
+   * @param includeLowerKey If `true`, split this map including an entry associated with `key`. Default is `true`.
+   * @param includeHigherKey If `true`, split this map including an entry associated with `key`. Default is `true`.
+   */
+  public range(lowerKey: K, higherKey: K, includeLowerKey = true, includeHigherKey = true): TreeMap<K, V> {
+    return this.splitHigher(lowerKey, includeLowerKey)
+      .splitLower(higherKey, includeHigherKey);
+  }
+
   public forEach(callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: unknown): void {
     Array.from(this.entries()).forEach(([k, v]) => {
       callbackfn(v, k, this)
